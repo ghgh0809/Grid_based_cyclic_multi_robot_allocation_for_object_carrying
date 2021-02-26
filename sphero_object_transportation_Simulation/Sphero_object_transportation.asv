@@ -1,0 +1,58 @@
+% This is the main Matlab file to simulate the object transportation
+% using sphero. The spheros will carry the object and move to desired 
+% goal point. 
+% The object needs to be defined prior of running the file.
+% 
+% Title : Grid-based Cyclic Robot Allocation for Object Carrying
+% Writer: Jee Hwan Park
+
+clear; clc; close all;
+addpath('geom2d')
+addpath('object')
+warning('off','all')
+warning
+
+%% Video recoder
+% v = VideoWriter('sample.avi');
+% v.FrameRate = 60;
+% v.Quality = 100;
+
+%% Define object properties:
+I = imread('object9_6.png'); % Define object
+[obj_boundary, centroid] = ObjectDefine(I);
+
+% figure(1)
+% hold on;
+% plot(obj_boundary(:,1), obj_boundary(:,2)); 
+% plot(centroid(1), centroid(2),'rx','Linewidth',2, 'markersize',13);
+% xlim([0 600]); ylim([0 600]);
+
+%% Compute the gap distance:
+% GapDefine:  shortest g_x, shortest g_y (360deg)
+% GapDefine2: shortest g_x, shortest g_y (parallel to g_x)
+gap = GapDefine(obj_boundary, centroid);
+%[gap, slope] = GapDefine2(obj_boundary, centroid);
+
+% g_x = gap(1);
+% g_y = gap(2);
+% if (g_x < g_y)
+%     gap(2) = g_x;
+% else
+%     gap(1) = g_y;
+% end
+
+%% Draw grid:
+Drawgrid(obj_boundary, centroid, gap);
+
+%% Simulating Transportion of the object:
+% Followings are the path options. Please enable desired path (ordered)
+% Path1: y = 2x
+% Path2: y = -x
+% Path3: y = 1
+% Path4: x = 1
+% Path5: y = sin(x)
+path_choice = [1 0 0 0 0];
+
+ Simulation(obj_boundary, centroid, gap, path_choice);
+% ControlSimulation(obj_boundary, centroid, gap, path_choice);
+
